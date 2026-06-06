@@ -19,6 +19,8 @@ from app.routers.ai import (
     router as ai_router
 )
 
+from app.routers import recommendations
+
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
@@ -29,7 +31,7 @@ app.include_router(auth_router)
 app.include_router(incident_router)
 app.include_router(resource_router)
 app.include_router(ai_router)
-
+app.include_router(recommendations.router)
 
 @app.get("/")
 def root():
