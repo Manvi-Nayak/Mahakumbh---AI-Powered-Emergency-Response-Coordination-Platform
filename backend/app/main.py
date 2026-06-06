@@ -15,6 +15,9 @@ from app.models.resource import Resource
 from app.routers.resources import (
     router as resource_router
 )
+from app.routers.ai import (
+    router as ai_router
+)
 
 Base.metadata.create_all(bind=engine)
 
@@ -25,6 +28,7 @@ app = FastAPI(
 app.include_router(auth_router)
 app.include_router(incident_router)
 app.include_router(resource_router)
+app.include_router(ai_router)
 
 
 @app.get("/")
