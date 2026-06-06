@@ -20,6 +20,8 @@ from app.routers.ai import (
 )
 
 from app.routers import recommendations
+from app.routers import dispatch
+from app.models.dispatch import Dispatch
 
 Base.metadata.create_all(bind=engine)
 
@@ -32,6 +34,7 @@ app.include_router(incident_router)
 app.include_router(resource_router)
 app.include_router(ai_router)
 app.include_router(recommendations.router)
+app.include_router(dispatch.router)
 
 @app.get("/")
 def root():
