@@ -24,6 +24,8 @@ def analyze_incident(description: str):
     {{
         "category": "",
         "severity": "",
+        "severity_score": 0,
+        "escalation_probability": 0,
         "recommended_resource": ""
     }}
     """
