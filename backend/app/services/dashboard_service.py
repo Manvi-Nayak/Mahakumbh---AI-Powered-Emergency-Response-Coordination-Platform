@@ -49,6 +49,13 @@ def get_dashboard_stats(db: Session):
         .all()
     )
 
+    recent_dispatches = (
+        db.query(Dispatch)
+        .order_by(Dispatch.id.desc())
+        .limit(5)
+        .all()
+    )
+
     return {
         "total_incidents": total_incidents,
         "active_incidents": active_incidents,
@@ -63,5 +70,58 @@ def get_dashboard_stats(db: Session):
                 "status": i.status
             }
             for i in recent_incidents
+        ],
+        "recent_dispatches": [
+            {
+                "id": d.id,
+                "incident_id": d.incident_id,
+                "resource_id": d.resource_id,
+                "status": d.status
+            }
+            for d in recent_dispatches
         ]
     }
+
+
+def get_live_dashboard_data(db: Session):
+
+    stats = get_dashboard_stats(db)
+
+    recent_incidents = (
+        db.query(Incident)
+        .order_by(Incident.id.desc())
+        .limit(5)
+        .all()
+    )
+
+    recent_dispatches = (
+        db.query(Dispatch)
+        .order_by(Dispatch.id.desc())
+        .limit(5)
+        .all()
+    )
+
+    return {
+        "stats": stats,
+
+        "recent_incidents": [
+            {
+                "id": i.id,
+                "title": i.title,
+                "status": i.status,
+                "location": i.location
+            }
+            for i in recent_incidents
+        ],
+
+        "recent_dispatches": [
+            {
+                "id": d.id,
+                "incident_id": d.incident_id,
+                "resource_id": d.resource_id,
+                "status": d.status
+            }
+            for d in recent_dispatches
+        ]
+    }
+    
