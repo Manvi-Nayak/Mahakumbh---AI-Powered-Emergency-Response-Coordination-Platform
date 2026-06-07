@@ -42,6 +42,12 @@ def get_dashboard_stats(db: Session):
         )
         .count()
     )
+    recent_incidents = (
+        db.query(Incident)
+        .order_by(Incident.id.desc())
+        .limit(5)
+        .all()
+    )
 
     return {
         "total_incidents": total_incidents,
@@ -49,5 +55,13 @@ def get_dashboard_stats(db: Session):
         "resolved_incidents": resolved_incidents,
         "available_resources": available_resources,
         "busy_resources": busy_resources,
-        "active_dispatches": active_dispatches
+        "active_dispatches": active_dispatches,
+        "recent_incidents": [
+            {
+                "id": i.id,
+                "title": i.title,
+                "status": i.status
+            }
+            for i in recent_incidents
+        ]
     }
