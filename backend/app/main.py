@@ -13,6 +13,7 @@ from app.routers import dispatch
 from app.models.dispatch import Dispatch
 from app.routers import response_workflow
 from app.routers import dashboard
+from app.routers import websocket
 
 
 Base.metadata.create_all(bind=engine)
@@ -28,9 +29,8 @@ app.include_router(ai_router)
 app.include_router(recommendations.router)
 app.include_router(dispatch.router)
 app.include_router(response_workflow.router)
-app.include_router(
-    dashboard.router
-)
+app.include_router(dashboard.router)
+app.include_router(websocket.router)
 # app.include_router()
 
 @app.get("/")

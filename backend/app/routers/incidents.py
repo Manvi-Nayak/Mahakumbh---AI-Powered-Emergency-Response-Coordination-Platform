@@ -15,18 +15,39 @@ from app.services.incident_service import (
     delete_incident
 )
 
+from app.services.notification_service import (
+    broadcast_incident_created
+)
+
 router = APIRouter(
     prefix="/incidents",
     tags=["Incidents"]
 )
 
 
+# @router.post("/", response_model=IncidentResponse)
+# def create(
+#     incident: IncidentCreate,
+#     db: Session = Depends(get_db)
+# ):
+#     return create_incident(db, incident)
+
 @router.post("/", response_model=IncidentResponse)
-def create(
+async def create(
     incident: IncidentCreate,
     db: Session = Depends(get_db)
 ):
-    return create_incident(db, incident)
+    created_incident = create_incident(
+        db,
+        incident
+    )
+
+    await broadcast_incident_created(
+        created_incident.id,
+        created_incident.title
+    )
+
+    return created_incident
 
 
 @router.get("/", response_model=list[IncidentResponse])

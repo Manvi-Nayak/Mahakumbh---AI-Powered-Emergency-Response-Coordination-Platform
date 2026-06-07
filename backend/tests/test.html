@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Test</title>
+</head>
+<body>
+
+<h2>WebSocket Status</h2>
+<div id="messages"></div>
+
+<script>
+    const messages = document.getElementById("messages");
+
+    const ws = new WebSocket("ws://127.0.0.1:8000/ws/dashboard");
+
+    ws.onopen = () => {
+        messages.innerHTML += "<p>✅ Connected</p>";
+
+        // send heartbeat every 5 seconds
+        setInterval(() => {
+            ws.send("ping");
+        }, 5000);
+    };
+
+    ws.onmessage = (event) => {
+        console.log("Received:", event.data);
+        messages.innerHTML += `
+        <pre>${event.data}</pre>
+        `;
+    };
+
+    ws.onerror = (error) => {
+        messages.innerHTML += "<p>❌ Error</p>";
+        console.error(error);
+    };
+
+    ws.onclose = () => {
+        messages.innerHTML += "<p>🔌 Disconnected</p>";
+    };
+</script>
+
+</body>
+</html>
