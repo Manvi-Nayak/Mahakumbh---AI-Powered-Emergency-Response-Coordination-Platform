@@ -5,6 +5,7 @@ from app.models.resource import Resource
 from app.models.dispatch import Dispatch
 
 
+
 def get_dashboard_stats(db: Session):
 
     total_incidents = db.query(Incident).count()
@@ -83,6 +84,48 @@ def get_dashboard_stats(db: Session):
     }
 
 
+# def get_live_dashboard_data(db: Session):
+
+#     stats = get_dashboard_stats(db)
+
+#     recent_incidents = (
+#         db.query(Incident)
+#         .order_by(Incident.id.desc())
+#         .limit(5)
+#         .all()
+#     )
+
+#     recent_dispatches = (
+#         db.query(Dispatch)
+#         .order_by(Dispatch.id.desc())
+#         .limit(5)
+#         .all()
+#     )
+
+#     return {
+#         "stats": stats,
+
+#         "recent_incidents": [
+#             {
+#                 "id": i.id,
+#                 "title": i.title,
+#                 "status": i.status,
+#                 "location": i.location
+#             }
+#             for i in recent_incidents
+#         ],
+
+#         "recent_dispatches": [
+#             {
+#                 "id": d.id,
+#                 "incident_id": d.incident_id,
+#                 "resource_id": d.resource_id,
+#                 "status": d.status
+#             }
+#             for d in recent_dispatches
+#         ]
+#     }
+
 def get_live_dashboard_data(db: Session):
 
     stats = get_dashboard_stats(db)
@@ -101,6 +144,11 @@ def get_live_dashboard_data(db: Session):
         .all()
     )
 
+    resources = (
+        db.query(Resource)
+        .all()
+    )
+
     return {
         "stats": stats,
 
@@ -109,7 +157,8 @@ def get_live_dashboard_data(db: Session):
                 "id": i.id,
                 "title": i.title,
                 "status": i.status,
-                "location": i.location
+                "location": i.location,
+                "severity": getattr(i, "severity", "medium")
             }
             for i in recent_incidents
         ],
@@ -122,6 +171,16 @@ def get_live_dashboard_data(db: Session):
                 "status": d.status
             }
             for d in recent_dispatches
+        ],
+
+        "resources": [
+            {
+                "id": r.id,
+                "name": r.name,
+                "resource_type": r.resource_type,
+                "status": r.status
+            }
+            for r in resources
         ]
     }
     

@@ -1,5 +1,4 @@
 from fastapi import FastAPI
-
 from app.database import Base, engine
 from app.models.user import User
 from app.models.incident import Incident
@@ -14,6 +13,8 @@ from app.models.dispatch import Dispatch
 from app.routers import response_workflow
 from app.routers import dashboard
 from app.routers import websocket
+from fastapi.middleware.cors import CORSMiddleware
+from app.routers import alerts
 
 
 Base.metadata.create_all(bind=engine)
@@ -31,6 +32,14 @@ app.include_router(dispatch.router)
 app.include_router(response_workflow.router)
 app.include_router(dashboard.router)
 app.include_router(websocket.router)
+app.include_router(alerts.router)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 # app.include_router()
 
 @app.get("/")

@@ -61,6 +61,39 @@ def get_dispatch_by_id(
     )
 
 
+# def update_dispatch_status(
+#     db: Session,
+#     dispatch_id: int,
+#     status: str
+# ):
+#     dispatch = (
+#         db.query(Dispatch)
+#         .filter(Dispatch.id == dispatch_id)
+#         .first()
+#     )
+
+#     if not dispatch:
+#         raise Exception("Dispatch not found")
+
+#     if status not in VALID_STATUSES:
+#         raise Exception("Invalid status")
+
+#     dispatch.status = status
+
+#     resource = (
+#         db.query(Resource)
+#         .filter(Resource.id == dispatch.resource_id)
+#         .first()
+#     )
+
+#     if status in ["completed", "cancelled"]:
+#         resource.status = "available"
+
+#     db.commit()
+#     db.refresh(dispatch)
+
+#     return dispatch
+
 def update_dispatch_status(
     db: Session,
     dispatch_id: int,
@@ -87,7 +120,21 @@ def update_dispatch_status(
     )
 
     if status in ["completed", "cancelled"]:
-        resource.status = "available"
+
+        if resource:
+            resource.status = "available"
+
+        incident = (
+            db.query(Incident)
+            .filter(
+                Incident.id ==
+                dispatch.incident_id
+            )
+            .first()
+        )
+
+        if incident:
+            incident.status = "resolved"
 
     db.commit()
     db.refresh(dispatch)

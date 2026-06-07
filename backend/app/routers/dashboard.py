@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
+from app.models.resource import Resource
 
 from app.database import get_db
 
@@ -27,4 +28,12 @@ def dashboard_stats(
 def live_dashboard(
     db: Session = Depends(get_db)
 ):
+    resources = db.query(Resource).all()
+    # return {
+    #     "stats": get_dashboard_stats(db),
+    #     "recent_incidents": recent_incidents,
+    #     "recent_dispatches": recent_dispatches,
+    #     "resources": resources
+    # }
     return get_live_dashboard_data(db)
+
