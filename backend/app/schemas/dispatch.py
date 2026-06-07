@@ -1,9 +1,14 @@
 from pydantic import BaseModel
 from datetime import datetime
 
+
 class DispatchCreate(BaseModel):
     incident_id: int
     resource_id: int
+
+
+class DispatchStatusUpdate(BaseModel):
+    status: str
 
 
 class DispatchResponse(BaseModel):

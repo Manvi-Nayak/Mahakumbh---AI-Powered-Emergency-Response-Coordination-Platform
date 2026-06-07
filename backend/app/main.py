@@ -1,27 +1,19 @@
 from fastapi import FastAPI
 
 from app.database import Base, engine
-
 from app.models.user import User
 from app.models.incident import Incident
-
 from app.routers.incidents import router as incident_router
-
-from app.routers.auth import (
-    router as auth_router
-)
-
+from app.routers.auth import (router as auth_router)
 from app.models.resource import Resource
-from app.routers.resources import (
-    router as resource_router
-)
-from app.routers.ai import (
-    router as ai_router
-)
-
+from app.routers.resources import (router as resource_router)
+from app.routers.ai import (router as ai_router)
 from app.routers import recommendations
 from app.routers import dispatch
 from app.models.dispatch import Dispatch
+from app.routers import response_workflow
+from app.routers import dashboard
+
 
 Base.metadata.create_all(bind=engine)
 
@@ -35,6 +27,11 @@ app.include_router(resource_router)
 app.include_router(ai_router)
 app.include_router(recommendations.router)
 app.include_router(dispatch.router)
+app.include_router(response_workflow.router)
+app.include_router(
+    dashboard.router
+)
+# app.include_router()
 
 @app.get("/")
 def root():

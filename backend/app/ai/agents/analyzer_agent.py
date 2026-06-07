@@ -47,6 +47,8 @@ def analyze_incident(description: str):
         return {
             "category": "Unknown",
             "severity": "Medium",
+            "severity_score": 50,
+            "escalation_probability": 50,
             "recommended_resource": "Manual Review",
             "error": str(e)
         }

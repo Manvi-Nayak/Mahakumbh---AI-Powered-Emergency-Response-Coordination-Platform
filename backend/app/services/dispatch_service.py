@@ -3,6 +3,16 @@ from sqlalchemy.orm import Session
 from app.models.dispatch import Dispatch
 from app.models.resource import Resource
 
+
+VALID_STATUSES = [
+    "assigned",
+    "en_route",
+    "arrived",
+    "completed",
+    "cancelled"
+]
+
+
 def create_dispatch(
     db: Session,
     incident_id: int,
@@ -28,8 +38,56 @@ def create_dispatch(
 
     db.add(dispatch)
 
-    # Mark resource busy
     resource.status = "busy"
+
+    db.commit()
+    db.refresh(dispatch)
+
+    return dispatch
+
+
+def get_all_dispatches(db: Session):
+    return db.query(Dispatch).all()
+
+
+def get_dispatch_by_id(
+    db: Session,
+    dispatch_id: int
+):
+    return (
+        db.query(Dispatch)
+        .filter(Dispatch.id == dispatch_id)
+        .first()
+    )
+
+
+def update_dispatch_status(
+    db: Session,
+    dispatch_id: int,
+    status: str
+):
+    dispatch = (
+        db.query(Dispatch)
+        .filter(Dispatch.id == dispatch_id)
+        .first()
+    )
+
+    if not dispatch:
+        raise Exception("Dispatch not found")
+
+    if status not in VALID_STATUSES:
+        raise Exception("Invalid status")
+
+    dispatch.status = status
+
+    resource = (
+        db.query(Resource)
+        .filter(Resource.id == dispatch.resource_id)
+        .first()
+    )
+
+    if status in ["completed", "cancelled"]:
+        resource.status = "available"
 
     db.commit()
     db.refresh(dispatch)
